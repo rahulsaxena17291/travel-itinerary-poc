@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Itinerary Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 0.8s ease forwards; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-slideIn { animation: slideIn 0.5s ease forwards; }
+
+    #result::-webkit-scrollbar { width: 8px; }
+    #result::-webkit-scrollbar-thumb {
+      background-color: #a78bfa;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-blue-400 to-purple-500 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-6xl animate-fadeIn">
+    <h1 class="text-4xl font-bold mb-2 text-gray-800 text-center">
+      ✈️ Travel Itinerary Generator
+    </h1>
+    <p class="text-lg text-purple-700 font-medium italic text-center mb-6">
+      (POC by Rahul Saxena)
+    </p>
+
+    <!-- 🌍 Input Form -->
+    <form id="itinerary-form" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <input id="departure" type="text" placeholder="Departure City" 
+               class="p-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required>
+        <input id="destination" type="text" placeholder="Destination" 
+               class="p-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required>
+        <input id="start_date" type="date" 
+               class="p-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required>
+        <input id="end_date" type="date" 
+               class="p-4 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400" required>
+      </div>
+
+      <!-- Generate Button -->
+      <div class="text-center">
+        <button type="submit"
+          class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
+          🚀 Generate Itinerary
+        </button>
+      </div>
+    </form>
+
+    <!-- 🌀 Loading Indicator -->
+    <div id="loading" class="hidden text-center mt-6 text-purple-600 text-lg font-semibold">
+      ⏳ Generating your perfect trip... Please wait.
+    </div>
+
+    <!-- 📜 Result Section -->
+    <div id="result" class="mt-6 p-6 text-left bg-gray-50 rounded-xl break-words max-h-[70vh] overflow-y-auto animate-slideIn"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("itinerary-form");
+      const resultDiv = document.getElementById("result");
+      const loading = document.getElementById("loading");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // ✅ Stop page reload
+
+        const departure = document.getElementById("departure").value;
+        const destination = document.getElementById("destination").value;
+        const start_date = document.getElementById("start_date").value;
+        const end_date = document.getElementById("end_date").value;
+
+        resultDiv.innerHTML = "";
+        loading.classList.remove("hidden");
+
+        try {
+          const res = await fetch("/generate_itinerary", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ departure, destination, start_date, end_date }),
+          });
+
+          const data = await res.json();
+          loading.classList.add("hidden");
+
+          if (data.itinerary) {
+            resultDiv.innerHTML = marked.parse(data.itinerary);
+
+            // Style markdown dynamically
+            resultDiv.querySelectorAll("h1").forEach(el =>
+              el.classList.add("text-3xl", "font-bold", "text-purple-700", "mb-4")
+            );
+            resultDiv.querySelectorAll("h2").forEach(el =>
+              el.classList.add("text-2xl", "font-semibold", "text-purple-600", "mt-6", "mb-2")
+            );
+            resultDiv.querySelectorAll("h3").forEach(el =>
+              el.classList.add("text-xl", "font-medium", "text-purple-500", "mt-4", "mb-1")
+            );
+            resultDiv.querySelectorAll("ul").forEach(el =>
+              el.classList.add("list-disc", "pl-6", "mb-4")
+            );
+            resultDiv.querySelectorAll("p").forEach(el =>
+              el.classList.add("text-gray-700", "mb-2")
+            );
+
+            // 🖼️ Fallback for broken image URLs
+            resultDiv.querySelectorAll("img").forEach(img => {
+              img.classList.add("rounded-xl", "shadow-md", "my-4", "w-full", "max-w-lg", "mx-auto");
+              img.onerror = () => {
+                img.src = "https://via.placeholder.com/600x400?text=Image+Not+Available";
+              };
+            });
+
+          } else {
+            resultDiv.innerHTML = `<p class="text-red-500">${data.error}</p>`;
+          }
+        } catch (err) {
+          loading.classList.add("hidden");
+          resultDiv.innerHTML = `<p class="text-red-500">❌ Error: ${err.message}</p>`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>
