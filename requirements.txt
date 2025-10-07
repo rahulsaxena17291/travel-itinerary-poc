@@ -1,87 +1,12 @@
-# ============================================
-# FULL VERSION (includes all dependencies)
-# ============================================
-
-# Core dependencies
-annotated-types==0.7.0
-anyio>=4.0.0
+# Minimal requirements for Flask + OpenAI travel itinerary app
 Flask==3.1.2
-Werkzeug==3.1.3
-click==8.3.0
-itsdangerous==2.2.0
-Jinja2>=3.1.0
-MarkupSafe>=2.1.0
-
-# OpenAI
 openai==2.1.0
-
-# Pydantic
 pydantic==2.11.9
-pydantic_core==2.33.2
-
-# HTTP clients
-httpx>=0.25.0
-httpcore>=1.0.0
-h11>=0.14.0
-h2>=4.0.0
-certifi>=2024.0.0
-charset-normalizer>=3.0.0
-idna>=3.0
-urllib3>=2.0.0
-requests>=2.31.0
-
-# PyTorch (if needed - these are VERY large packages, ~2GB+)
-# Comment out if not needed for production
-torch==2.5.1
-torchaudio==2.5.1
-torchvision==0.20.1
-
-# Jupyter/Notebook (optional - remove if not needed for production)
-jupyter-core>=5.0.0
-jupyter-client>=8.0.0
-jupyter-server>=2.0.0
-jupyterlab>=4.0.0
-ipython>=8.0.0
-ipykernel>=6.0.0
-notebook-shim>=0.2.0
-
-# Utilities
 python-dotenv>=1.0.0
-python-dateutil>=2.8.0
-pytz>=2024.0
-tqdm==4.67.1
-typing-extensions>=4.0.0
-distro==1.9.0
-filelock>=3.0.0
-
-# Web scraping (if needed)
-beautifulsoup4>=4.12.0
-soupsieve>=2.5.0
-
-# Other utilities
-colorama>=0.4.0
-blinker==1.9.0
-Markdown==3.9
-arrow>=1.3.0
-
-# WSGI server for production
 gunicorn
+requests>=2.31.0
+Werkzeug==3.1.3
 
-# Security
-argon2-cffi>=23.0.0
-
-# JSON utilities
-jiter==0.11.0
-jsonpointer==2.0
-
-# ============================================
-# MINIMAL VERSION (uncomment and use instead)
-# Comment out the full version above
-# ============================================
-
-# Flask==3.1.2
-# openai==2.1.0
-# pydantic==2.11.9
-# python-dotenv>=1.0.0
-# gunicorn
-# requests>=2.31.0
+# Optional but recommended
+python-dateutil>=2.8.0
+tqdm>=4.67.0
